@@ -145,7 +145,7 @@ if(HPX_WITH_COMPILE_ONLY_TESTS)
 
     # add dependencies to pseudo-target
     add_hpx_pseudo_dependencies(tests.unit.lcos.${compile_test}
-                                ${compile_test}_test_exe)
+                                ${compile_test})
   endforeach()
 endif()
 
