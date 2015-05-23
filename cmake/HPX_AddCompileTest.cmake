@@ -39,9 +39,10 @@ macro(add_hpx_compile_test category name)
     set(sources ${sources} "${CMAKE_CURRENT_SOURCE_DIR}/${source}")
   endforeach()
 
+  get_filename_component(compiler_path ${CMAKE_CXX_COMPILER} REALPATH)
   string(REPLACE " " ";" CMAKE_CXX_FLAGS_LIST ${CMAKE_CXX_FLAGS})
   set(cmd
-    ${CMAKE_CXX_COMPILER} ${CMAKE_CXX_FLAGS_LIST} ${include_flags} ${sources}
+    ${compiler_path} ${CMAKE_CXX_FLAGS_LIST} ${include_flags} ${sources}
   )
 
   if(MSVC)
