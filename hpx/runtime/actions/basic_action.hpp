@@ -140,6 +140,8 @@ namespace hpx { namespace actions
         static const std::size_t arity = sizeof...(Args);
         typedef util::tuple<typename util::decay<Args>::type...> arguments_type;
 
+        typedef void action_tag;
+
         ///////////////////////////////////////////////////////////////////////
         static std::string get_action_name(naming::address::address_type /*lva*/)
         {
@@ -484,10 +486,6 @@ namespace hpx { namespace actions
     }}}                                                                       \
                                                                               \
     namespace hpx { namespace traits {                                        \
-        template <>                                                           \
-        struct is_action<action>                                              \
-          : boost::mpl::true_                                                 \
-        {};                                                                   \
         template <>                                                           \
         struct needs_automatic_registration<action>                           \
           : boost::mpl::false_                                                \
