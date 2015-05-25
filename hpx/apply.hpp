@@ -16,10 +16,12 @@
 #include <hpx/util/decay.hpp>
 #include <hpx/util/deferred_call.hpp>
 #include <hpx/util/move.hpp>
+#include <hpx/traits/is_action.hpp>
 #include <hpx/traits/is_callable.hpp>
 #include <hpx/traits/is_executor.hpp>
 
 #include <boost/mpl/identity.hpp>
+#include <boost/mpl/if.hpp>
 #include <boost/utility/enable_if.hpp>
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -31,10 +33,13 @@ namespace hpx
     // simply launch the given function or function object asynchronously
     template <typename F, typename ...Ts>
     typename boost::enable_if_c<
-        traits::detail::is_callable_not_action<
-            typename util::decay<F>::type(typename util::decay<Ts>::type...)
-        >::value
-     && !traits::is_bound_action<typename util::decay<F>::type>::value
+        boost::mpl::if_c<
+            !traits::is_action<typename util::decay<F>::type>::value
+         && !traits::is_bound_action<typename util::decay<F>::type>::value
+          , traits::is_callable<
+                typename util::decay<F>::type(typename util::decay<Ts>::type...)>
+          , boost::mpl::false_
+        >::type::value
       , bool
     >::type
     apply(threads::executor& sched, F&& f, Ts&&... vs)
@@ -47,11 +52,14 @@ namespace hpx
 
     template <typename Executor, typename F, typename ...Ts>
     typename boost::enable_if_c<
-        traits::is_executor<Executor>::value
-     && traits::detail::is_callable_not_action<
-            typename util::decay<F>::type(typename util::decay<Ts>::type...)
-        >::value
-     && !traits::is_bound_action<typename util::decay<F>::type>::value
+        boost::mpl::if_c<
+            traits::is_executor<typename util::decay<Executor>::type>::value
+         && !traits::is_action<typename util::decay<F>::type>::value
+         && !traits::is_bound_action<typename util::decay<F>::type>::value
+          , traits::is_callable<
+                typename util::decay<F>::type(typename util::decay<Ts>::type...)>
+          , boost::mpl::false_
+        >::type::value
       , bool
     >::type
     apply(Executor& exec, F&& f, Ts&&... vs)
@@ -63,10 +71,14 @@ namespace hpx
 
     template <typename F, typename ...Ts>
     typename boost::enable_if_c<
-        traits::detail::is_callable_not_action<
-            typename util::decay<F>::type(typename util::decay<Ts>::type...)
-        >::value
-     && !traits::is_bound_action<typename util::decay<F>::type>::value
+        boost::mpl::if_c<
+            !traits::is_executor<typename util::decay<F>::type>::value
+         && !traits::is_action<typename util::decay<F>::type>::value
+         && !traits::is_bound_action<typename util::decay<F>::type>::value
+          , traits::is_callable<
+                typename util::decay<F>::type(typename util::decay<Ts>::type...)>
+          , boost::mpl::false_
+        >::type::value
       , bool
     >::type
     apply(F&& f, Ts&&... vs)

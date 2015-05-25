@@ -22,6 +22,7 @@
 #include <hpx/traits/serialize_as_future.hpp>
 
 #include <boost/enable_shared_from_this.hpp>
+#include <boost/mpl/if.hpp>
 #include <boost/type_traits/remove_reference.hpp>
 #ifndef BOOST_MSVC
 #include <boost/utility/enable_if.hpp>
@@ -52,10 +53,14 @@ namespace hpx
 #ifndef BOOST_MSVC
     template <typename F, typename ...Ts>
     typename boost::enable_if_c<
-        traits::detail::is_callable_not_action<
-            typename util::decay<F>::type(typename util::decay<Ts>::type...)
-        >::value
-     && !traits::is_bound_action<typename util::decay<F>::type>::value
+        boost::mpl::if_c<
+            !traits::is_executor<typename util::decay<F>::type>::value
+         && !traits::is_action<typename util::decay<F>::type>::value
+         && !traits::is_bound_action<typename util::decay<F>::type>::value
+          , traits::is_callable<
+                typename util::decay<F>::type(typename util::decay<Ts>::type...)>
+          , boost::mpl::false_
+        >::type::value
       , bool
     >::type
     apply(F&& f, Ts&&... vs);

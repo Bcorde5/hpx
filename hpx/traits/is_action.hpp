@@ -7,7 +7,6 @@
 #define HPX_TRAITS_IS_ACTION_APR_15_2012_0601PM
 
 #include <hpx/traits.hpp>
-#include <hpx/util/always_void.hpp>
 #include <boost/mpl/bool.hpp>
 
 namespace hpx { namespace traits
@@ -15,12 +14,6 @@ namespace hpx { namespace traits
     template <typename Action, typename Enable>
     struct is_action
       : boost::mpl::false_
-    {};
-
-    template <typename Action>
-    struct is_action<Action
-      , typename util::always_void<typename Action::action_tag>::type>
-      : boost::mpl::true_
     {};
 
     ///////////////////////////////////////////////////////////////////////////

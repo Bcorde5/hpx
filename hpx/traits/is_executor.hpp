@@ -26,7 +26,7 @@ namespace hpx { namespace parallel { HPX_INLINE_NAMESPACE(v3)
 
     template <typename T>
     struct is_executor
-      : detail::is_executor<typename hpx::util::decay<T>::type>
+      : detail::is_executor<typename std::remove_cv<T>::type>
     {};
 
     template <typename Executor, typename Enable = void>
@@ -38,7 +38,7 @@ namespace hpx { namespace traits
     // new executor framework
     template <typename Executor, typename Enable>
     struct is_executor
-      : parallel::is_executor<Executor>
+      : parallel::v3::is_executor<Executor>
     {};
 }}
 
